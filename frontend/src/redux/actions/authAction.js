@@ -1,7 +1,8 @@
 import api from '../../api/http'
-import{REGISTER_SUCCESS,REGISTER_FAIL,AUTH_ERROR,USER_LOADED,LOGIN_FAIL,LOGIN_SUCCESS} from '../types/type'
+import{REGISTER_SUCCESS,REGISTER_FAIL,AUTH_ERROR,USER_LOADED,LOGIN_FAIL,LOGIN_SUCCESS,LOGOUT,ClEAR_PROFILE} from '../types/type'
 import setAuthToken from '../../utils/setAuthToken'
 import { setAlert } from './alertAction'
+
 //load user
 export const laodUser=()=>async dispatch=>{
 if(localStorage.token){
@@ -22,16 +23,17 @@ try {
 }
 }
 //Register user
-export const register=({name,email,password})=> async dispatch =>{
+export const register=({name,email,password},navigate)=> async dispatch =>{
     try {
         const res=await api.post('/api/users',{name,email,password})
-        console.log( res.data)
+        console.log( res.data.token)
         dispatch({
             type:REGISTER_SUCCESS,
             payload:res.data
             
         })
         dispatch(laodUser())
+        navigate("/dashboard")
     } catch (error) {
         const errors=error.response.data.errors
         if(errors){
@@ -39,21 +41,23 @@ export const register=({name,email,password})=> async dispatch =>{
      console.error(error)   
     }
         dispatch({
-            type:REGISTER_FAIL
+            type:REGISTER_FAIL,
+            payload:error.response.data
         })
     }
 }
 //login user
-export const login=(email,password)=> async dispatch =>{
+export const login=({email,password},navigate)=> async dispatch =>{
     try {
-        const res=await api.post('/api/auth',{email,password})
-        console.log( res.data)
+        const res= await api.post('/api/auth',{email,password})
+        console.log( res.data.token)
         dispatch({
             type:LOGIN_SUCCESS,
             payload:res.data
             
         })
         dispatch(laodUser())
+        navigate("/dashboard")
     } catch (error) {
         const errors=error.response.data.errors
         if(errors){
@@ -61,7 +65,15 @@ export const login=(email,password)=> async dispatch =>{
      console.error(error)   
     }
         dispatch({
-            type:LOGIN_FAIL
+            type:LOGIN_FAIL,
+            payload:error.response.data
         })
     }
+}
+//logout
+export const logout=()=>async dispatch=>{
+    
+    dispatch({type:LOGOUT})
+
+  
 }

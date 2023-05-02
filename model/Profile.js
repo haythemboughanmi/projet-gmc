@@ -10,6 +10,9 @@ const ProfileSchema = new mongoose.Schema({
   websit: {
     type: String,
   },
+  image: {
+    type: String
+  },
   location: {
     type: String,
   },
@@ -85,7 +88,7 @@ const ProfileSchema = new mongoose.Schema({
         }
     }
   ],
-  social:{
+
     youtube:{
         type:String
     },
@@ -101,7 +104,7 @@ const ProfileSchema = new mongoose.Schema({
     instagram:{
         type:String
     }
-  },
+  ,
   date:{
     type:Date,
     default:Date.now

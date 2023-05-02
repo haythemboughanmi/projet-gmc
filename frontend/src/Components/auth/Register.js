@@ -1,11 +1,13 @@
 import { useState } from "react";
 import React from "react";
-import { useDispatch } from 'react-redux';
-import { Link } from "react-router-dom";
+import { useDispatch,useSelector} from 'react-redux';
+import { Link,useNavigate } from "react-router-dom"
 import { setAlert } from "../../redux/actions/alertAction";
 import { register } from "../../redux/actions/authAction";
 
 const Register = () => {
+  const { isAuthenticated }=useSelector(state=>state.authReducer)
+  const navigate=useNavigate()
   const [FormData, setForData] = useState({
     name: "",
     email: "",
@@ -21,12 +23,16 @@ const Register = () => {
     if (password !== password2) {
       dispatch(setAlert("password not match", "danger"));
     } else {
-      dispatch(register({name,email,password}))
+      dispatch(register({name,email,password},navigate))
     }
   };
+  //Redirect if logged in 
+  if(isAuthenticated){
+    return navigate("/dashboard")
+  }
   return (
-    <div>
-      <h1 className="large text-primary">Sign Up</h1>
+    <div className="container">
+    <h1 className="large text-primary">Sign Up</h1>
       <p className="lead">
         <i className="fas fa-user"></i> Create Your Account
       </p>

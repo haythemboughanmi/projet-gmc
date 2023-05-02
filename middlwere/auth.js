@@ -9,12 +9,14 @@ module.exports = function (req, res, next) {
     return res.status(401).json({ msg: "no token ,authorization denied" });
   }
   // verify token
-  try {
-    const decoded = jwt.verify(token, process.env.secretkey);
-    req.user = decoded.user;
-    console.log(req.user)
-    next();
-  } catch (error) {
-    res.status(401).json({ msg: "token is not valid" });
+  else{
+    try {
+      const decoded = jwt.verify(token, process.env.secretkey);
+      req.user = decoded.user;
+      next();
+    } catch (error) {
+      res.status(401).json({ msg: "token is not valid" });
+    }
   }
+ 
 };

@@ -17,7 +17,7 @@ router.post(
   body("email", "please  include a valid email").isEmail(),
   body(
     "password",
-    "please enter your password with 8 or more characters"
+    "please enter your password with 6 or more characters"
   ).isLength({ min: 6 }),
   async (req, res) => {
     const errors = validationResult(req);
@@ -49,7 +49,9 @@ router.post(
       };
       jwt.sign(payload,process.env.secretkey,(err,token)=>{
         if(err) throw err ;
+        console.log(token);
         res.json({token})
+        
       })
     } catch (error) {
       console.log(error.message);

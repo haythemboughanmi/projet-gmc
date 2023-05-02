@@ -1,8 +1,13 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 const router = express.Router();
+// const config = require('config');
 const auth = require("../../middlwere/auth");
 const Profile = require("../../model/Profile");
+const Post = require("../../model/Post");
+require("dotenv").config();
+const axios = require('axios');
+
 
 // get api/profile/me
 // get current users profile
@@ -15,8 +20,9 @@ router.get("/me", auth, async (req, res) => {
     );
     if (!profile) {
       res.status(400).json({ msg: "There is no profile for this user" });
+    } else {
+      res.json(profile);
     }
-    res.json(profile);
   } catch (error) {
     console.log(error.message);
     res.status(400).send("serveur error");
@@ -41,6 +47,7 @@ router.post(
       company,
       websit,
       location,
+      image,
       bio,
       status,
       githubusername,
@@ -58,6 +65,7 @@ router.post(
     if (company) profilefields.company = company;
     if (websit) profilefields.websit = websit;
     if (location) profilefields.location = location;
+    if (image) profilefields.image = image;
     if (bio) profilefields.bio = bio;
     if (status) profilefields.status = status;
     if (githubusername) profilefields.githubusername = githubusername;
@@ -66,12 +74,12 @@ router.post(
     }
     console.log(profilefields.skills);
     //build social object
-    profilefields.social = {};
-    if (youtube) profilefields.social.youtube = youtube;
-    if (facebook) profilefields.social.facebook = facebook;
-    if (twitter) profilefields.social.twitter = twitter;
-    if (instagram) profilefields.social.instagram = instagram;
-    if (linkedin) profilefields.social.linkedin = linkedin;
+    // profilefields.social = {};
+    if (youtube) profilefields.youtube = youtube;
+    if (facebook) profilefields.facebook = facebook;
+    if (twitter) profilefields.twitter = twitter;
+    if (instagram) profilefields.instagram = instagram;
+    if (linkedin) profilefields.linkedin = linkedin;
     try {
       let profile = await Profile.findOne({ user: req.user.id });
       if (profile) {
@@ -127,7 +135,7 @@ router.get("/user/:user_id", async (req, res) => {
 router.delete("/", auth, async (req, res) => {
   try {
     //remove user post
-
+    await Post.deleteMany({ user: req.user.id });
     //remove profile
     await Profile.findOneAndRemove({ user: req.user.id });
     //remove user
@@ -142,7 +150,7 @@ router.delete("/", auth, async (req, res) => {
 // add profile experience
 // access private
 router.put(
-  "/",
+  "/experience",
   auth,
   [
     body("title", "title is required").not().isEmpty(),
@@ -159,9 +167,12 @@ router.put(
     const newExp = { title, company, location, from, to, current, description };
     try {
       const profile = await Profile.findOne({ user: req.user.id });
-      profile.experience.unshift(newExp);
-      await profile.save();
-      res.json(profile);
+
+      if (profile) {
+        profile.experience.unshift(newExp);
+        await profile.save();
+        res.json(profile);
+      }
     } catch (error) {
       console.error(error.message);
       res.status(500).send("serveur error");
@@ -196,8 +207,7 @@ router.put(
     body("school", "school is required").not().isEmpty(),
     body("degree", "degree is required").not().isEmpty(),
     body("fieldofstudy", "field of study is required").not().isEmpty(),
-    body("from", "from is required").not().isEmpty()
-   
+    body("from", "from is required").not().isEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -206,15 +216,25 @@ router.put(
     }
     const { school, degree, fieldofstudy, from, to, current, description } =
       req.body;
-    const newEdu = { school, degree, fieldofstudy, from, to, current, description };
+    const newEdu = {
+      school,
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description,
+    };
     try {
       const profile = await Profile.findOne({ user: req.user.id });
-      profile.education.unshift(newEdu);
-      await profile.save();
-      res.json(profile);
+      if (profile) {
+        profile.education.unshift(newEdu);
+        await profile.save();
+        res.json(profile);
+      }
     } catch (error) {
       console.error(error.message);
-      res.status(500).send("serveur error");
+      res.status(500).send(error);
     }
   }
 );
@@ -236,4 +256,26 @@ router.delete("/education/:edu_id", auth, async (req, res) => {
     res.status(500).send("serveur error");
   }
 });
+// get api/profile/githyb/:username
+// get user repos from github
+// access public
+router.get('/github/:username', async (req, res) => {
+  try {
+    const response = await axios.get(`https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc`, {
+      params: {
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+      }
+      
+    });
+    res.json(response.data);
+    console.log(response)
+  } catch (error) {
+    res.status(error.response.status || 500).json(error.response.data);
+  }
+});
+
+
+
 module.exports = router;
+
