@@ -1,19 +1,19 @@
 import React, { useEffect, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ProfileTop from "./ProfileTop";
 import ProfileAbout from "./ProfileAbout";
-import { getProfileById } from "../../redux/actions/profileAction";
+import { getProfileById,adminDelete } from "../../redux/actions/profileAction";
 import ProfileExperience from "./ProfileExperience"
 import ProfileEducation from "./ProfileEduction"
 import ProfileGithub from "./ProfileGithub";
-
 import Spinner from "../layout/Spinner";
 
 const Profile = () => {
   // Get the id param from the URL.
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate=useNavigate()
   useEffect(() => {
 
     dispatch(getProfileById(id));
@@ -23,8 +23,7 @@ const Profile = () => {
   const { profile, loading,repos } = useSelector((state) => state.profileReducer);
   console.log(profile)
   const { isAuthenticated, user } = useSelector((state) => state.authReducer);
-
-  
+console.log(user)
   return (
     <div className="container">
       {profile === null || loading ? (
@@ -36,11 +35,16 @@ const Profile = () => {
           </Link>
           {isAuthenticated &&
             loading === false &&
-            user._id === profile.user._id && (
+            user?._id === profile.user?._id && (
               <Link to="/edit-profile" className="btn btn-dark">
                 Edit Profile
               </Link>
             )}
+            {
+              user?.role==="admin"&&(<button onClick={()=>dispatch(adminDelete(id,navigate))} className='btn btn-danger'>
+              <i className='fas fa-user-minus'></i>Delete  Account  
+              </button>)
+            }
           <div class="profile-grid my-1">
             <ProfileTop />
             <ProfileAbout />
@@ -48,7 +52,7 @@ const Profile = () => {
           <h2 class="text-primary">Experience</h2>
           {profile.experience.map((experience)=>(
             <ProfileExperience
-            key={experience._id}
+            key={experience?._id}
             experience={experience}
           />
           ))}
@@ -57,7 +61,7 @@ const Profile = () => {
           <h2 class="text-primary">Education</h2>
           {profile.education.map((education)=>(
             <ProfileEducation
-            key={education._id}
+            key={education?._id}
             education={education}
           />
           ))}

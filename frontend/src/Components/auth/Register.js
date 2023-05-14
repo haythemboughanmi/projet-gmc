@@ -12,18 +12,25 @@ const Register = () => {
     name: "",
     email: "",
     password: "",
-    password2: "",
+    password2: ""
   });
+  const [role,setRole]=useState("user")
   const dispatch=useDispatch()
-  const { name, email, password, password2 } = FormData;
-  const onChange = (e) =>
-    setForData({ ...FormData, [e.target.name]: e.target.value });
+  var { name, email, password, password2 } = FormData;
+  
+  console.log(FormData)
+  console.log(role)
+  const onChange = (e) =>{
+    setForData({ ...FormData, [e.target.name]: e.target.value })
+    if(email==="emworks@gmail.com"){setRole("admin")}else{setRole("user")}};
   const onSubmit = (e) => {
+    
     e.preventDefault();
     if (password !== password2) {
       dispatch(setAlert("password not match", "danger"));
     } else {
-      dispatch(register({name,email,password},navigate))
+      
+      dispatch(register({name,email,password,role},navigate))
     }
   };
   //Redirect if logged in 
@@ -40,7 +47,7 @@ const Register = () => {
         <div className="form-group">
           <input
             type="text"
-            placeholder="Name"
+            placeholder="First & last Name"
             name="name"
             value={name}
             onChange={(e) => onChange(e)}

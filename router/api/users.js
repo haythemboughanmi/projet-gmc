@@ -24,7 +24,7 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { name, email, password } = req.body;
+    const { name, email, password,role} = req.body;
     try {
       // see if email existe
       const found = await User.findOne({ email });

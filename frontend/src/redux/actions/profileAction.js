@@ -1,6 +1,6 @@
 import api from '../../api/http'
 import { setAlert } from './alertAction'
-import {ClEAR_PROFILE, DELETE_ACCOUNT, GET_PROFILE,GET_PROFILES,PROFILE_ERROR, UPDATE_PROFILE,GET_REPOS} from '../types/type'
+import {ClEAR_PROFILE, DELETE_ACCOUNT, GET_PROFILE,GET_PROFILES,PROFILE_ERROR, UPDATE_PROFILE,GET_REPOS,ADIMINDELETE} from '../types/type'
 import axios from 'axios'
  
 //get current profile
@@ -184,7 +184,7 @@ export const deleteEducation=id=>async dispatch=>{
         })
     }
 }
-//delete education
+//delete account
 export const deleteAccount=()=>async dispatch=>{
     if(window.confirm('Are you sure ? This can NOT be undone')){
         try {
@@ -202,4 +202,23 @@ export const deleteAccount=()=>async dispatch=>{
         }
     }
    
+}
+//admin delete account 
+export const adminDelete=(id,navigate)=>async dispatch=>{
+    if(window.confirm('Are you sure ? This can NOT be undone')){
+        try {
+        const res=api.delete(`/api/profile/${id}`)
+        
+            dispatch({type:ADIMINDELETE})
+
+            dispatch(setAlert('The account has been permanantly deleted' ,'success'))
+            navigate('/dashboard')
+        } catch (error) {
+            dispatch({
+                type:PROFILE_ERROR,
+                payload:{msg:error.response.statusText,status:error.response.status}
+            })
+        }
+    }
+    
 }

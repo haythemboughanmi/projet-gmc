@@ -7,12 +7,14 @@ const Navbar = () => {
   const isAuthenticated = useSelector(
     (state) => state.authReducer.isAuthenticated
   );
+  const user =useSelector((state)=>state.authReducer)
   const navigate = useNavigate();
   useEffect(() => {
     dispatch(laodUser());
   }, [dispatch]);
   const handlelogout = () => {
     dispatch(logout(),navigate("/login"));
+    
   };
   return (
     <nav className="navbar bg-dark">
@@ -23,6 +25,15 @@ const Navbar = () => {
       </h1>
       {isAuthenticated ? (
         <ul>
+          <li>
+          <Link to="/jobs">jobs</Link>
+          </li>
+            
+          <li>
+            
+          <Link to="/jobs-offre">jobs-offre</Link>
+          </li>
+          
           <li>
           <Link to="/profiles">Developers</Link>
           </li>

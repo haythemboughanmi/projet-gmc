@@ -20,7 +20,7 @@ const dispatch=useDispatch()
         <Link to={`/profile/${post.user}`}>
           <img
             className="round-img"
-            src={profile.image}
+            src={profile?.image}
             alt=""
           />
           <h4>{post?.name}</h4>

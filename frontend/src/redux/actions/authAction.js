@@ -23,9 +23,9 @@ try {
 }
 }
 //Register user
-export const register=({name,email,password},navigate)=> async dispatch =>{
+export const register=({name,email,password,role},navigate)=> async dispatch =>{
     try {
-        const res=await api.post('/api/users',{name,email,password})
+        const res=await api.post('/api/users',{name,email,password,role})
         console.log( res.data.token)
         dispatch({
             type:REGISTER_SUCCESS,
@@ -36,6 +36,7 @@ export const register=({name,email,password},navigate)=> async dispatch =>{
         navigate("/dashboard")
     } catch (error) {
         const errors=error.response.data.errors
+        console.log(error.response.data)
         if(errors){
             errors.forEach(err=>dispatch(setAlert(err.msg,'danger')))
      console.error(error)   

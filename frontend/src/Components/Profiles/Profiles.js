@@ -7,6 +7,7 @@ import Spinner from "../layout/Spinner";
 const Profiles = () => {
   const { profiles } = useSelector((state) => state.profileReducer);
   const { loading } = useSelector((state) => state.profileReducer);
+console.log(profiles)
   const dispatch = useDispatch();
   useEffect(()=>{
 dispatch(getAllProfile())
@@ -24,7 +25,7 @@ dispatch(getAllProfile())
             developers
           </p>
           <div className="profiles">
-            {profiles.length > 0 ? (
+            {profiles?.length > 0 ? (
               profiles.map((profile) => (
                 <ProfileItem key={profile._id} profile={profile} />
               ))

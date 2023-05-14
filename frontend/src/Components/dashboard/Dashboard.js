@@ -12,6 +12,7 @@ const Dashboard = () => {
   const { loading }=useSelector(state=>state.profileReducer)
   const { profile }=useSelector(state=>state.profileReducer)
 console.log(profile)
+console.log(user)
   const dispatch=useDispatch()
   useEffect(()=>{
     dispatch(getCurrentProfile())

@@ -579,4 +579,28 @@
       padding: 0.3rem 0.4rem;
     }
   }
+  /* test */
+  .jobs{
+    box-sizing: content-box;
+    width: 50%;
+    border: solid #850505 1px;
+    padding: 5px;
+    margin: 20px;
+    margin-top: 61.5px;
+    
+    /* justify-content: center;
+    align-items: center; */
+    padding-left:250px;
+    
+    
+  }
+  em{
+    color: #d32d46;
+  }
+  .photo{
+    position: relative;
+    background: url(../src/img/gris.jpg) no-repeat center center/cover ;
+    height: 100%;
+    margin-bottom: 100px;
+  }
   

@@ -15,6 +15,8 @@ import Profiles from "./Components/Profiles/Profiles";
 import Profile from  "./Components/profile/Profile";
 import Posts from  "./Components/Posts/Posts";
 import Post from  "./Components/Post/Post";
+import JobsOffre from "./Components/jobs/JobsOffre";
+import Jobs from "./Components/jobs/Jobs";
 import PrivateRoute from "./Components/routing/PrivateRoute";
 import { laodUser } from "./redux/actions/authAction";
 import setAuthToken from "./utils/setAuthToken";
@@ -53,6 +55,22 @@ function App() {
             element={
               <PrivateRoute>
                 <CreateProfile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/jobs-offre"
+            element={
+              <PrivateRoute>
+                <JobsOffre />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/jobs"
+            element={
+              <PrivateRoute>
+                <Jobs />
               </PrivateRoute>
             }
           />

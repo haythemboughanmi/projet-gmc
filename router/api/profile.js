@@ -5,9 +5,9 @@ const router = express.Router();
 const auth = require("../../middlwere/auth");
 const Profile = require("../../model/Profile");
 const Post = require("../../model/Post");
+const user = require("../../model/Users");
 require("dotenv").config();
-const axios = require('axios');
-
+const axios = require("axios");
 
 // get api/profile/me
 // get current users profile
@@ -146,6 +146,18 @@ router.delete("/", auth, async (req, res) => {
     res.status(500).send("serveur error");
   }
 });
+//admin delete
+router.delete("/:id", async (req, res) => {
+  try {
+    await user.findByIdAndDelete ( req.params.id);
+    await Profile.findOneAndRemove({user:req.params.id});
+    await Post.deleteMany({ user: req.params.id });
+    res.status(200).send({ msg: "success" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send(error);
+  }
+});
 // put api/profile/experience
 // add profile experience
 // access private
@@ -259,23 +271,22 @@ router.delete("/education/:edu_id", auth, async (req, res) => {
 // get api/profile/githyb/:username
 // get user repos from github
 // access public
-router.get('/github/:username', async (req, res) => {
+router.get("/github/:username", async (req, res) => {
   try {
-    const response = await axios.get(`https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc`, {
-      params: {
-        client_id: process.env.GITHUB_CLIENT_ID,
-        client_secret: process.env.GITHUB_CLIENT_SECRET,
+    const response = await axios.get(
+      `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc`,
+      {
+        params: {
+          client_id: process.env.GITHUB_CLIENT_ID,
+          client_secret: process.env.GITHUB_CLIENT_SECRET,
+        },
       }
-      
-    });
+    );
     res.json(response.data);
-    console.log(response)
+    console.log(response);
   } catch (error) {
     res.status(error.response.status || 500).json(error.response.data);
   }
 });
 
-
-
 module.exports = router;
-
